@@ -40,5 +40,7 @@ jobs:
             QMAKE: ${{ env.QT6_ROOT }}/bin/qmake
             LD_LIBRARY_PATH: ${{ env.QT6_ROOT }}/lib
         run: |
-            wget https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage -O ${{ runner.temp }}/appimagecraft.AppImage
-            ${{ runner.temp }}/appimagecraft.AppImage
+            appimage_bin="${{ runner.temp }}/appimagecraft.AppImage"
+            wget https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage -O $appimage_bin
+            chmod +x $appimage_bin
+            $appimage_bin
