@@ -19,7 +19,7 @@ jobs:
           sudo apt update && sudo apt upgrade
       - name: Install dependencies
         run: |
-          sudo apt install --no-install-recommends build-essential cmake git libgnutls28-dev
+          sudo apt install --no-install-recommends build-essential cmake git libgnutls28-dev yq
           sudo wget -O ${{ runner.temp }}/appimagecraft.AppImage https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage
           sudo chmod +x ${{ runner.temp }}/appimagecraft.AppImage
       - name: Install online Qt version
@@ -48,3 +48,9 @@ jobs:
             cat appimagecraft.yml
 
             ${{ runner.temp }}/appimagecraft.AppImage
+            tee -a "${GITHUB_OUTPUT}" <<< "gemImagerVersion=$(yq '.project.version' appimagecraft.yml)"
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gemstone Imager ${{ steps.post-build.outputs.gemImagerVersion }} Linux
+          path: Gemstone_Imager-${{ steps.post-build.outputs.gemImagerVersion }}-x86_64.AppImage
