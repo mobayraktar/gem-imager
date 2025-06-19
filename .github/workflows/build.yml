@@ -42,5 +42,5 @@ jobs:
       - name: Build
         run: |
             export QMAKE="$QT_ROOT_DIR/bin/qmake"
-            export LD_LIBRARY_PATH="$QT_ROOT_DIR/bin/qmake"
+            export LD_LIBRARY_PATH="$QT_ROOT_DIR/lib"
             ${{ runner.temp }}/appimagecraft.AppImage
