@@ -39,8 +39,11 @@ jobs:
       - name: Modify appimagecraft.yml
         run: |
           sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$QT6_ROOT\"@" appimagecraft.yml
+          cat appimagecraft.yml
       - name: Build
         uses: AppImageCrafters/build-appimage@master
+        with:
+            recipe: appimagecraft.yml
         env:
             QMAKE: ${{ env.QT6_ROOT }}/bin/qmake
             LD_LIBRARY_PATH: ${{ env.QT6_ROOT }}/lib
