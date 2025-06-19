@@ -46,10 +46,8 @@ jobs:
             sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$Qt6_ROOT\"@" appimagecraft.yml
             sed -i "s@QMAKE: .*@QMAKE: \"$QMAKE\"@" appimagecraft.yml
 
-            cat appimagecraft.yml
-
             ${{ runner.temp }}/appimagecraft.AppImage
-            tee -a "${GITHUB_OUTPUT}" <<< "gemImagerVersion=$(yq '.project.version' appimagecraft.yml)"
+            tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion=$(yq '.project.version' appimagecraft.yml)
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
