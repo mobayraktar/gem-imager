@@ -36,12 +36,15 @@ jobs:
           path: aqtinstall.log
           if-no-files-found: error
       - uses: actions/checkout@v4
-      - name: Modify appimagecraft.yml
-        run: |
-          sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$QT6_ROOT\"@" appimagecraft.yml
       - name: Build
         run: |
             export Qt6_ROOT="$QT_ROOT_DIR"
             export QMAKE="$QT_ROOT_DIR/bin/qmake"
             export LD_LIBRARY_PATH="$QT_ROOT_DIR/lib"
+
+            sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$Qt6_ROOT\"@" appimagecraft.yml
+            sed -i "s@QMAKE: .*@QMAKE: \"$QMAKE\"@" appimagecraft.yml
+
+            cat appimagecraft.yml
+
             ${{ runner.temp }}/appimagecraft.AppImage
