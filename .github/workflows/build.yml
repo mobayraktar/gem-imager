@@ -31,19 +31,14 @@ jobs:
           name: aqtinstall-log-linux
           path: aqtinstall.log
           if-no-files-found: error
-      - name: Install linuxdeploy
-        uses: pcolby/install-linuxdeploy@v1
-        with:
-          plugins: qt
       - uses: actions/checkout@v4
       - name: Modify appimagecraft.yml
         run: |
           sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$QT6_ROOT\"@" appimagecraft.yml
-          cat appimagecraft.yml
       - name: Build
-        uses: AppImageCrafters/build-appimage@master
-        with:
-            recipe: appimagecraft.yml
         env:
             QMAKE: ${{ env.QT6_ROOT }}/bin/qmake
             LD_LIBRARY_PATH: ${{ env.QT6_ROOT }}/lib
+        run: |
+            wget https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage -O ${{ runner.temp }}/appimagecraft.AppImage
+            ${{ runner.temp }}/appimagecraft.AppImage
