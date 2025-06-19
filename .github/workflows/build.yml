@@ -1,0 +1,46 @@
+name: Build
+
+on: workflow_dispatch
+
+env:
+  # Currently, GitHub-hosted runners for public repos specify 4 cores, except macOS 14+
+  # See https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/
+  #     about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+  CMAKE_BUILD_PARALLEL_LEVEL: 4 # Default only; overridden where appropriate, such as on macOS 14+ below.
+  QT_FORCE_STDERR_LOGGING: 1 # Make sure Qt logs errors (during Workflow runs) to console. Especially for Windows.
+  QT6_ROOT: ${{ github.workspace }}/Qt/6.7.3/gcc_64
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Upgrade OS
+        run: |
+          sudo apt-mark hold firefox grub-efi-amd64-signed
+          sudo apt update && sudo apt upgrade
+      - name: Install online Qt version
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: 6.7.3
+          setup-python: true
+          aqtversion: '>=3.2.0' # 3.2.0+ required for Qt 6.8+ support; https://github.com/miurahr/aqtinstall/issues/843
+      - name: Upload aqtinstall log file
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aqtinstall-log-linux
+          path: aqtinstall.log
+          if-no-files-found: error
+      - name: Install linuxdeploy
+        uses: pcolby/install-linuxdeploy@v1
+        with:
+          plugins: qt
+      - uses: actions/checkout@v4
+      - name: Modify appimagecraft.yml
+        run: |
+          sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$QT6_ROOT\"@" appimagecraft.yml
+      - name: Build
+        uses: AppImageCrafters/build-appimage@master
+        env:
+            QMAKE: ${{ env.QT6_ROOT }}/bin/qmake
+            LD_LIBRARY_PATH: ${{ env.QT6_ROOT }}/lib
