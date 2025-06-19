@@ -37,6 +37,7 @@ jobs:
           if-no-files-found: error
       - uses: actions/checkout@v4
       - name: Build
+        id: build
         run: |
             export Qt6_ROOT="$QT_ROOT_DIR"
             export QMAKE="$QT_ROOT_DIR/bin/qmake"
@@ -52,5 +53,5 @@ jobs:
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: Gemstone Imager ${{ steps.post-build.outputs.gemImagerVersion }} Linux
-          path: Gemstone_Imager-${{ steps.post-build.outputs.gemImagerVersion }}-x86_64.AppImage
+          name: Gemstone Imager ${{ steps.build.outputs.gemImagerVersion }} Linux
+          path: Gemstone_Imager-${{ steps.build.outputs.gemImagerVersion }}-x86_64.AppImage
