@@ -8,7 +8,6 @@ env:
   #     about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
   CMAKE_BUILD_PARALLEL_LEVEL: 4 # Default only; overridden where appropriate, such as on macOS 14+ below.
   QT_FORCE_STDERR_LOGGING: 1 # Make sure Qt logs errors (during Workflow runs) to console. Especially for Windows.
-  QT6_ROOT: ${{ github.workspace }}/Qt/6.7.3/gcc_64
 
 jobs:
   linux:
@@ -41,8 +40,7 @@ jobs:
         run: |
           sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$QT6_ROOT\"@" appimagecraft.yml
       - name: Build
-        env:
-            QMAKE: ${{ env.QT6_ROOT }}/bin/qmake
-            LD_LIBRARY_PATH: ${{ env.QT6_ROOT }}/lib
         run: |
+            export QMAKE="$QT_ROOT_DIR/bin/qmake"
+            export LD_LIBRARY_PATH="$QT_ROOT_DIR/bin/qmake"
             ${{ runner.temp }}/appimagecraft.AppImage
