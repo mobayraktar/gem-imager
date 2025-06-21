@@ -94,7 +94,7 @@ jobs:
               -G "Ninja"
       - name: Build
         run: |
-          "%QT_ROOT_DIR%\bin\qt-cmake.bat" --build "%GITHUB_WORKSPACE%\build"s
+          C:\CMake\bin\cmake.exe --build "%GITHUB_WORKSPACE%\build" --parallel 4
       - name: Show directory content
         shell: bash
         run: |
