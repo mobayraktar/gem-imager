@@ -69,6 +69,7 @@ jobs:
         shell: bash
         run: |
           ls -lah "$QT_ROOT_DIR/bin/"
+          cat $QT_ROOT_DIR/bin/qt-cmake.bat
       - name: Upload aqtinstall log file
         if: failure()
         uses: actions/upload-artifact@v4
@@ -91,7 +92,7 @@ jobs:
               -DCMAKE_PREFIX_PATH:PATH="%QT_ROOT_DIR%" ^
               -DCMAKE_GENERATOR:STRING=Ninja ^
               -G "Ninja"
-            "%QT_ROOT_DIR%\bin\cmake.exe" --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
+            "%QT_ROOT_DIR%\bin\qt-cmake.bat" --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
       - name: Show directory content
         shell: bash
         run: |
