@@ -78,6 +78,7 @@ jobs:
           ls -lah "$QT_ROOT_DIR/bin/"
           cat $QT_ROOT_DIR/bin/qt-cmake.bat
       - name: Install NSIS
+        shell: powershell
         run: |
           iwr -useb get.scoop.sh -outfile 'install.ps1'
           .\install.ps1 -RunAsAdmin
