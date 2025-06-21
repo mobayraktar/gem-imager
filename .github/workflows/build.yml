@@ -83,7 +83,7 @@ jobs:
         run: |
           (Get-Content "src\CMakeLists.txt") -replace 'set\(MINGW64_ROOT ""', "set(MINGW64_ROOT `"$env:QT_ROOT_DIR`"" | Set-Content "src\CMakeLists.txt"
       - uses: actions/checkout@v4
-      - name: Build
+      - name: Configure
         id: build
         run: |
             "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build" ^
@@ -92,7 +92,9 @@ jobs:
               -DCMAKE_PREFIX_PATH:PATH="%QT_ROOT_DIR%" ^
               -DCMAKE_GENERATOR:STRING=Ninja ^
               -G "Ninja"
-            "%QT_ROOT_DIR%\bin\qt-cmake.bat" --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
+      - name: Build
+        run: |
+          "%QT_ROOT_DIR%\bin\qt-cmake.bat" --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
       - name: Show directory content
         shell: bash
         run: |
