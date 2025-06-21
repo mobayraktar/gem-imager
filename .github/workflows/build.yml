@@ -65,11 +65,6 @@ jobs:
           setup-python: true
           arch: win64_mingw
           aqtversion: '>=3.2.0' # 3.2.0+ required for Qt 6.8+ support; https://github.com/miurahr/aqtinstall/issues/843
-      - name: Show toolchain
-        shell: bash
-        run: |
-          ls -lah "$QT_ROOT_DIR/bin/"
-          cat $QT_ROOT_DIR/bin/qt-cmake.bat
       - name: Upload aqtinstall log file
         if: failure()
         uses: actions/upload-artifact@v4
@@ -77,6 +72,22 @@ jobs:
           name: aqtinstall-log-win
           path: aqtinstall.log
           if-no-files-found: error
+      - name: Show toolchain
+        shell: bash
+        run: |
+          ls -lah "$QT_ROOT_DIR/bin/"
+          cat $QT_ROOT_DIR/bin/qt-cmake.bat
+      - name: Install NSIS
+        run: |
+          iwr -useb get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop update
+          scoop bucket add extras
+          scoop install nsis
+      - name: Print NSIS version
+        run: makensis -VERSION
+      - name: Print NSIS compile flags
+        run: makensis -HDRINFO
       - uses: actions/checkout@v4
       - name: Set MINGW64_ROOT
         shell: powershell
@@ -94,7 +105,7 @@ jobs:
               -G "Ninja"
       - name: Build
         run: |
-          C:\CMake\bin\cmake.exe --build "%GITHUB_WORKSPACE%\build" --parallel 4
+          cmake --build "%GITHUB_WORKSPACE%\build" --parallel 4
       - name: Show directory content
         shell: bash
         run: |
