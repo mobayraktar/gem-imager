@@ -77,9 +77,9 @@ jobs:
         shell: powershell
         run: |
           (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
-          ls $QT_ROOT_DIR\bin\
+          ls %QT_ROOT_DIR%\bin\
       - uses: actions/checkout@v4
       - name: Build
         id: build
         run: |
-            "$QT_ROOT_DIR\bin\qt-cmake.exe" -S "$GITHUB_WORKSPACE\src" -B "$GITHUB_WORKSPACE\build"
+            "%QT_ROOT_DIR%\bin\qt-cmake.exe" -S "$GITHUB_WORKSPACE\src" -B "$GITHUB_WORKSPACE\build"
