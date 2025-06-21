@@ -94,6 +94,7 @@ jobs:
         shell: powershell
         run: |
           (Get-Content "src\CMakeLists.txt") -replace 'set\(MINGW64_ROOT ""', "set(MINGW64_ROOT `"C:\mingw64`"" | Set-Content "src\CMakeLists.txt"
+          type src\CMakeLists.txt
       - uses: actions/checkout@v4
       - name: Configure
         id: build
