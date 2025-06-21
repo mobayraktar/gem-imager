@@ -75,8 +75,7 @@ jobs:
       - name: Set MINGW64_ROOT
         shell: powershell
         run: |
-          sed -i "s@set(MINGW64_ROOT \"\"@set(MINGW64_ROOT \"$QT_ROOT_DIR\"@" src/CMakeLists.txt
-          (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
+          (Get-Content "%GITHUB_WORKSPACE%\src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "%GITHUB_WORKSPACE%\src\CMakeLists.txt"
       - uses: actions/checkout@v4
       - name: Build
         id: build
