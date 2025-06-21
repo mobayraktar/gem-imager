@@ -76,8 +76,9 @@ jobs:
       - name: Set MINGW64_ROOT
         shell: powershell
         run: |
+          qt_root_dir = Join-Path $env:QT_ROOT_DIR "bin"
           (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
-          ls %QT_ROOT_DIR%\bin\
+          ls $qt_root_dir\bin\
       - uses: actions/checkout@v4
       - name: Build
         id: build
