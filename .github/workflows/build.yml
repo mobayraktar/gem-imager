@@ -78,9 +78,11 @@ jobs:
         run: |
           $qt_root_dir = $env:QT_ROOT_DIR
           (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
+          type src\CMakeLists.txt
           ls $qt_root_dir\bin\
       - uses: actions/checkout@v4
       - name: Build
         id: build
         run: |
             "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build"
+            dir %GITHUB_WORKSPACE%\build
