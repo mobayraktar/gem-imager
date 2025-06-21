@@ -65,6 +65,10 @@ jobs:
           setup-python: true
           arch: win64_mingw
           aqtversion: '>=3.2.0' # 3.2.0+ required for Qt 6.8+ support; https://github.com/miurahr/aqtinstall/issues/843
+      - name: Show toolchain
+        shell: bash
+        run: |
+          ls -lah "$QT_ROOT_DIR/bin/"
       - name: Upload aqtinstall log file
         if: failure()
         uses: actions/upload-artifact@v4
@@ -87,7 +91,7 @@ jobs:
               -DCMAKE_PREFIX_PATH:PATH="%QT_ROOT_DIR%" ^
               -DCMAKE_GENERATOR:STRING=Ninja ^
               -G "Ninja"
-            cmake --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
+            "%QT_ROOT_DIR%\bin\cmake.exe" --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
       - name: Show directory content
         shell: bash
         run: |
