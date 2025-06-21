@@ -75,7 +75,7 @@ jobs:
       - name: Set MINGW64_ROOT
         shell: powershell
         run: |
-          $workspace = $env:GITHUB_WORKSPACE
+          $workspace = Join-Path $env:GITHUB_WORKSPACE ".."
           (Get-Content "$workspace\src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "$workspace\src\CMakeLists.txt"
       - uses: actions/checkout@v4
       - name: Build
