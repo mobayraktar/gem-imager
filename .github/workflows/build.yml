@@ -85,4 +85,8 @@ jobs:
         id: build
         run: |
             "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build"
-            dir %GITHUB_WORKSPACE%\build
+            cmake --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
+      - name: Show directory content
+        shell: bash
+        run: |
+          ls -lah "$GITHUB_WORKSPACE/build"
