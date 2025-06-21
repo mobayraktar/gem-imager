@@ -81,13 +81,12 @@ jobs:
       - name: Build
         id: build
         run: |
-            "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build"
-              ^ "-DQT_QMAKE_EXECUTABLE:FILEPATH=%QT_ROOT_DIR%/qmake.exe"
-              ^ "-DCMAKE_BUILD_TYPE:STRING=Release"
-              ^ "-DCMAKE_CXX_COMPILER:FILEPATH=%QT_ROOT_DIR%/bin/g++.exe"
-              ^ "-DCMAKE_PREFIX_PATH:PATH=%QT_ROOT_DIR%"
-              ^ "-DCMAKE_C_COMPILER:FILEPATH=%QT_ROOT_DIR%/bin/gcc.exe"
-              ^ "-DCMAKE_GENERATOR:STRING=Ninja"
+            "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build" ^
+              -DQT_QMAKE_EXECUTABLE:FILEPATH="%QT_ROOT_DIR%\bin\qmake.exe" ^
+              -DCMAKE_BUILD_TYPE:STRING=Release ^
+              -DCMAKE_PREFIX_PATH:PATH="%QT_ROOT_DIR%" ^
+              -DCMAKE_GENERATOR:STRING=Ninja ^
+              -G "Ninja"
             cmake --build "%GITHUB_WORKSPACE%\build" --config Release --parallel 4
       - name: Show directory content
         shell: bash
