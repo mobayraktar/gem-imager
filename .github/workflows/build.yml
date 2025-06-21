@@ -72,17 +72,6 @@ jobs:
           name: aqtinstall-log-win
           path: aqtinstall.log
           if-no-files-found: error
-      - name: Install NSIS
-        run: |
-          iwr -useb get.scoop.sh -outfile 'install.ps1'
-          .\install.ps1 -RunAsAdmin
-          scoop update
-          scoop bucket add extras
-          scoop install nsis
-      - name: Print NSIS version
-        run: makensis -VERSION
-      - name: Print NSIS compile flags
-        run: makensis -HDRINFO
       - name: Set MINGW64_ROOT
         run: |
           mingw_dir="$QT_ROOT_DIR/../Tools/mingw64"
