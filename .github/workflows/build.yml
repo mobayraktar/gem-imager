@@ -75,7 +75,8 @@ jobs:
       - name: Set MINGW64_ROOT
         shell: bash
         run: |
-          mingw_dir="$QT_ROOT_DIR/../Tools/mingw64"
+          mingw_dir="$QT_ROOT_DIR/../../Tools/mingw1120_64"
+          ls "$QT_ROOT_DIR/../../Tools"
           sed -i "s@set(MINGW64_ROOT \"\"@set(MINGW64_ROOT \"$QT_ROOT_DIR\"@" src/CMakeLists.txt
       - uses: actions/checkout@v4
       - name: Build
