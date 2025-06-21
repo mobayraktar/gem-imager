@@ -73,14 +73,12 @@ jobs:
           path: aqtinstall.log
           if-no-files-found: error
       - name: Set MINGW64_ROOT
-        shell: bash
+        shell: powershell
         run: |
-          mingw_dir="$QT_ROOT_DIR/../../Tools/mingw1120_64"
-          ls "$QT_ROOT_DIR/.."
-          ls "$QT_ROOT_DIR"
           sed -i "s@set(MINGW64_ROOT \"\"@set(MINGW64_ROOT \"$QT_ROOT_DIR\"@" src/CMakeLists.txt
+          (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
       - uses: actions/checkout@v4
       - name: Build
         id: build
         run: |
-            "$QT_ROOT_DIR/bin/qt-cmake" -S "$GITHUB_WORKSPACE/src" -B "$GITHUB_WORKSPACE/build"
+            "$QT_ROOT_DIR\bin\qt-cmake" -S "$GITHUB_WORKSPACE\src" -B "$GITHUB_WORKSPACE\build"
