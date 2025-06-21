@@ -83,4 +83,4 @@ jobs:
       - name: Build
         id: build
         run: |
-            "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "$GITHUB_WORKSPACE\src" -B "$GITHUB_WORKSPACE\build"
+            "%QT_ROOT_DIR%\bin\qt-cmake.bat" -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build"
