@@ -77,7 +77,7 @@ jobs:
         shell: powershell
         run: |
           $qt_root_dir = $env:QT_ROOT_DIR
-          (Get-Content "src\CMakeLists.txt") -replace "set\(MINGW64_ROOT `"`"", "set(MINGW64_ROOT `"%QT_ROOT_DIR%`"" | Set-Content "src\CMakeLists.txt"
+          (Get-Content "src\CMakeLists.txt") -replace 'set\(MINGW64_ROOT ""', "set(MINGW64_ROOT `"$env:QT_ROOT_DIR`"" | Set-Content "src\CMakeLists.txt"
           type src\CMakeLists.txt
           ls $qt_root_dir\bin\
       - uses: actions/checkout@v4
