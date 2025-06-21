@@ -73,6 +73,7 @@ jobs:
           path: aqtinstall.log
           if-no-files-found: error
       - name: Set MINGW64_ROOT
+        shell: bash
         run: |
           mingw_dir="$QT_ROOT_DIR/../Tools/mingw64"
           sed -i "s@set(MINGW64_ROOT \"\"@set(MINGW64_ROOT \"$QT_ROOT_DIR\"@" src/CMakeLists.txt
