@@ -137,9 +137,11 @@ jobs:
       - name: Build
         run: |
           cmake --build "$GITHUB_WORKSPACE/build" --parallel
-      - name: Dirs
-        run: |
-          ls -lah "$GITHUB_WORKSPACE/build"
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: GemImager macOS (Apple Silicon) ${{ steps.getversion.outputs.gemImagerVersion }}
+          path: ${{ github.workspace }}/build/GemstoneImager-${{ steps.getversion.outputs.gemImagerVersion }}.dmg
 
   macos-x86_64:
     runs-on: macos-13
@@ -177,5 +179,5 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: GemImager macOS ${{ steps.getversion.outputs.gemImagerVersion }}
+          name: GemImager macOS (Intel) ${{ steps.getversion.outputs.gemImagerVersion }}
           path: ${{ github.workspace }}/build/GemstoneImager-${{ steps.getversion.outputs.gemImagerVersion }}.dmg
