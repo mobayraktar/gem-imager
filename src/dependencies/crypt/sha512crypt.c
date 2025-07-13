@@ -1,8 +1,47 @@
 /* SHA512-based Unix crypt implementation.
    Released into the Public Domain by Ulrich Drepper <drepper@redhat.com>.  */
-#include "shacrypt.h"   
 
-extern char* stpncpy(char* dest, const char* src, size_t n);
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/param.h>
+#include <sys/types.h>
+
+#ifdef __APPLE__
+#include <machine/endian.h>
+
+static void *
+mempcpy (void *dst, const void *src, size_t len)
+{
+  return (char *) memcpy (dst, src, len) + len;
+}
+#else
+#ifdef _WIN32
+#define	__LITTLE_ENDIAN	1234
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+static char *stpncpy(char *dest, const char *src, size_t n)
+{
+    size_t size = strnlen(src, n);
+    memcpy(dest, src, size);
+    dest += size;
+    if (size != n)
+        dest[0] = '\0';
+
+    return dest;
+}
+
+#else
+#include <endian.h>
+#endif
+#endif
+
    /* Structure to save state of computation between the single steps.  */
    struct sha512_ctx {
        uint64_t H[8];

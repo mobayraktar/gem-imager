@@ -169,7 +169,7 @@ set(CURL_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/dependencies/curl-8.11.0/include
 set(HEADERS config.h imagewriter.h networkaccessmanagerfactory.h nan.h drivelistitem.h drivelistmodel.h drivelistmodelpollthread.h driveformatthread.h powersaveblocker.h cli.h
     devicewrapper.h devicewrapperblockcacheentry.h devicewrapperpartition.h devicewrapperstructs.h devicewrapperfatpartition.h wlancredentials.h
     downloadthread.h downloadextractthread.h localfileextractthread.h downloadstatstelemetry.h dependencies/mountutils/src/mountutils.hpp 
-    dependencies/crypt/sha256crypt.h dependencies/crypt/des.h dependencies/crypt/sha512crypt.h dependencies/crypt/shacrypt.h
+    dependencies/crypt/sha256crypt.h dependencies/crypt/des.h dependencies/crypt/sha512crypt.h
     dependencies/qtxmodem/crc16-xmodem.h dependencies/qtxmodem/transfer.h)
 
 # Add dependencies
@@ -479,6 +479,9 @@ elseif(APPLE)
         endif(IMAGER_SIGNING_IDENTITY)
     else()
         # Unsigned application
+        add_custom_command(TARGET ${PROJECT_NAME}
+                POST_BUILD
+                COMMAND mv "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app" "${CMAKE_BINARY_DIR}/GemstoneImager.app")
         add_custom_command(TARGET ${PROJECT_NAME}
             POST_BUILD
             COMMAND "${MACDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/GemstoneImager.app" -qmldir="${CMAKE_CURRENT_SOURCE_DIR}" -always-overwrite -no-strip -dmg)
