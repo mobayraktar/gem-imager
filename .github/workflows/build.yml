@@ -126,14 +126,12 @@ jobs:
       - name: Configure
         id: configure
         run: |
-          export Qt6_ROOT="$Qt6_DIR"
-
           cmake -S "$GITHUB_WORKSPACE/src" -B "$GITHUB_WORKSPACE/build" \
             -DQT_QMAKE_EXECUTABLE:FILEPATH="$Qt6_DIR/bin/qmake" \
+            -DQt6_ROOT:STRING="$Qt6_DIR" \
             -DCMAKE_BUILD_TYPE:STRING=Release \
             -DCMAKE_PREFIX_PATH:PATH="$Qt6_DIR" \
-            -DCMAKE_GENERATOR:STRING=Ninja \
-            -DCMAKE_OSX_ARCHITECTURES:STRING=arm64
+            -DCMAKE_GENERATOR:STRING=Ninja
       - name: Build
         run: |
           cmake --build "$GITHUB_WORKSPACE/build" --parallel
@@ -146,43 +144,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: GemImager macOS (Apple Silicon) ${{ steps.getversion.outputs.gemImagerVersion }}
-          path: ${{ github.workspace }}/build/GemstoneImager-${{ steps.getversion.outputs.gemImagerVersion }}.dmg
-
-  macos-x86_64:
-    runs-on: macos-13
-    steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          aqtversion: '==3.1.*'
-          version: '6.7.3'
-          host: 'mac'
-          target: 'desktop'
-          arch: 'clang_64'
-          modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Configure
-        id: configure
-        run: |
-          export Qt6_ROOT="$Qt6_DIR"
-
-          cmake -S "$GITHUB_WORKSPACE/src" -B "$GITHUB_WORKSPACE/build" \
-            -DQT_QMAKE_EXECUTABLE:FILEPATH="$Qt6_DIR/bin/qmake" \
-            -DCMAKE_BUILD_TYPE:STRING=Release \
-            -DCMAKE_PREFIX_PATH:PATH="$Qt6_DIR" \
-            -DCMAKE_GENERATOR:STRING=Ninja \
-            -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
-      - name: Build
-        run: |
-          cmake --build "$GITHUB_WORKSPACE/build" --parallel
-      - name: Get project version
-        id: getversion
-        run: |
-          version=$(grep IMAGER_VERSION_STR "$GITHUB_WORKSPACE/build/CMakeCache.txt" | cut -d '=' -f 2)
-          tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$version"
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: GemImager macOS (Intel) ${{ steps.getversion.outputs.gemImagerVersion }}
           path: ${{ github.workspace }}/build/GemstoneImager-${{ steps.getversion.outputs.gemImagerVersion }}.dmg
