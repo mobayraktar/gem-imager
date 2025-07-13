@@ -7,107 +7,107 @@ env:
   QT_FORCE_STDERR_LOGGING: 1
 
 jobs:
-  linux:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Upgrade OS
-        run: |
-          sudo apt-mark hold firefox grub-efi-amd64-signed
-          sudo apt update && sudo apt upgrade
-      - name: Install dependencies
-        run: |
-          sudo apt install --no-install-recommends build-essential cmake git libgnutls28-dev libxcb-cursor-dev
-          sudo wget -O ${{ runner.temp }}/appimagecraft.AppImage https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage
-          sudo chmod +x ${{ runner.temp }}/appimagecraft.AppImage
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          aqtversion: '==3.1.*'
-          version: '6.7.3'
-          host: 'linux'
-          target: 'desktop'
-          arch: 'linux_gcc_64'
-          modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Build
-        id: build
-        run: |
-            export Qt6_ROOT="$Qt6_DIR"
-            export QMAKE="$Qt6_DIR/bin/qmake"
-            export LD_LIBRARY_PATH="$Qt6_DIR/lib"
+  # linux:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Upgrade OS
+  #       run: |
+  #         sudo apt-mark hold firefox grub-efi-amd64-signed
+  #         sudo apt update && sudo apt upgrade
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt install --no-install-recommends build-essential cmake git libgnutls28-dev libxcb-cursor-dev
+  #         sudo wget -O ${{ runner.temp }}/appimagecraft.AppImage https://github.com/TheAssassin/appimagecraft/releases/download/continuous/appimagecraft-x86_64.AppImage
+  #         sudo chmod +x ${{ runner.temp }}/appimagecraft.AppImage
+  #     - name: Install Qt
+  #       uses: jurplel/install-qt-action@v3
+  #       with:
+  #         aqtversion: '==3.1.*'
+  #         version: '6.7.3'
+  #         host: 'linux'
+  #         target: 'desktop'
+  #         arch: 'linux_gcc_64'
+  #         modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Build
+  #       id: build
+  #       run: |
+  #           export Qt6_ROOT="$Qt6_DIR"
+  #           export QMAKE="$Qt6_DIR/bin/qmake"
+  #           export LD_LIBRARY_PATH="$Qt6_DIR/lib"
 
-            sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$Qt6_ROOT\"@" appimagecraft.yml
-            sed -i "s@QMAKE: .*@QMAKE: \"$QMAKE\"@" appimagecraft.yml
+  #           sed -i "s@Qt6_ROOT=.*@Qt6_ROOT=\"$Qt6_ROOT\"@" appimagecraft.yml
+  #           sed -i "s@QMAKE: .*@QMAKE: \"$QMAKE\"@" appimagecraft.yml
 
-            ${{ runner.temp }}/appimagecraft.AppImage
-            imager_version=$(grep '  version:' appimagecraft.yml | cut -d ':' -f 2 | tr -d ' ')
-            tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$imager_version"
-            mv Gemstone_Imager-${imager_version}-x86_64.AppImage GemImager-${imager_version}.AppImage
-      - name: Upload AppImage
-        uses: actions/upload-artifact@v4
-        with:
-          name: GemImager Linux ${{ steps.build.outputs.gemImagerVersion }}
-          path: GemImager-${{ steps.build.outputs.gemImagerVersion }}.AppImage
+  #           ${{ runner.temp }}/appimagecraft.AppImage
+  #           imager_version=$(grep '  version:' appimagecraft.yml | cut -d ':' -f 2 | tr -d ' ')
+  #           tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$imager_version"
+  #           mv Gemstone_Imager-${imager_version}-x86_64.AppImage GemImager-${imager_version}.AppImage
+  #     - name: Upload AppImage
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: GemImager Linux ${{ steps.build.outputs.gemImagerVersion }}
+  #         path: GemImager-${{ steps.build.outputs.gemImagerVersion }}.AppImage
 
-  windows:
-    runs-on: windows-2022
-    defaults: { run: { shell: cmd } }
-    steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          aqtversion: '==3.1.*'
-          version: '6.7.3'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_mingw'
-          modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
-          tools: 'tools_mingw90'
-      - name: Install NSIS
-        shell: powershell
-        run: |
-          iwr -useb get.scoop.sh -outfile 'install.ps1'
-          .\install.ps1 -RunAsAdmin
-          scoop update
-          scoop bucket add extras
-          scoop install nsis
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set MINGW64_ROOT
-        shell: powershell
-        run: |
-          $mingw_dir = (Resolve-Path "$($env:Qt6_DIR)\..\..\Tools\mingw1120_64").Path -replace '\\', '/'
-          (Get-Content "src\CMakeLists.txt") -replace 'set\(MINGW64_ROOT "C:/Qt/Tools/mingw1120_64"', "set(MINGW64_ROOT `"$mingw_dir`"" | Set-Content "src\CMakeLists.txt"
-      - name: Configure
-        id: build
-        run: |
-            set Path=%Qt6_DIR%\..\..\Tools\mingw1120_64\bin;%Path%
-            cmake -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build" ^
-              -DQT_QMAKE_EXECUTABLE:FILEPATH="%Qt6_DIR%\bin\qmake.exe" ^
-              -DCMAKE_BUILD_TYPE:STRING=Release ^
-              -DCMAKE_PREFIX_PATH:PATH="%Qt6_DIR%" ^
-              -DCMAKE_GENERATOR:STRING=Ninja ^
-              -G "Ninja"
-      - name: Build
-        run: |
-          set Path=%Qt6_DIR%\..\..\Tools\mingw1120_64\bin;%Path%
-          cmake --build "%GITHUB_WORKSPACE%\build" --parallel
-      - name: Make NSIS installer
-        run: |
-          makensis %GITHUB_WORKSPACE%\build\gem-imager.nsi
-      - name: Get project version
-        id: getversion
-        shell: bash
-        run: |
-          version=$(grep IMAGER_VERSION_STR "$GITHUB_WORKSPACE/build/CMakeCache.txt" | cut -d '=' -f 2)
-          mv $GITHUB_WORKSPACE/build/gem-imager-${version}.exe $GITHUB_WORKSPACE/build/GemImager-${version}.exe
-          tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$version"
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: GemImager Windows ${{ steps.getversion.outputs.gemImagerVersion }}
-          path: ${{ github.workspace }}\build\GemImager-${{ steps.getversion.outputs.gemImagerVersion }}.exe
+  # windows:
+  #   runs-on: windows-2022
+  #   defaults: { run: { shell: cmd } }
+  #   steps:
+  #     - name: Install Qt
+  #       uses: jurplel/install-qt-action@v3
+  #       with:
+  #         aqtversion: '==3.1.*'
+  #         version: '6.7.3'
+  #         host: 'windows'
+  #         target: 'desktop'
+  #         arch: 'win64_mingw'
+  #         modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
+  #         tools: 'tools_mingw90'
+  #     - name: Install NSIS
+  #       shell: powershell
+  #       run: |
+  #         iwr -useb get.scoop.sh -outfile 'install.ps1'
+  #         .\install.ps1 -RunAsAdmin
+  #         scoop update
+  #         scoop bucket add extras
+  #         scoop install nsis
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Set MINGW64_ROOT
+  #       shell: powershell
+  #       run: |
+  #         $mingw_dir = (Resolve-Path "$($env:Qt6_DIR)\..\..\Tools\mingw1120_64").Path -replace '\\', '/'
+  #         (Get-Content "src\CMakeLists.txt") -replace 'set\(MINGW64_ROOT "C:/Qt/Tools/mingw1120_64"', "set(MINGW64_ROOT `"$mingw_dir`"" | Set-Content "src\CMakeLists.txt"
+  #     - name: Configure
+  #       id: build
+  #       run: |
+  #           set Path=%Qt6_DIR%\..\..\Tools\mingw1120_64\bin;%Path%
+  #           cmake -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build" ^
+  #             -DQT_QMAKE_EXECUTABLE:FILEPATH="%Qt6_DIR%\bin\qmake.exe" ^
+  #             -DCMAKE_BUILD_TYPE:STRING=Release ^
+  #             -DCMAKE_PREFIX_PATH:PATH="%Qt6_DIR%" ^
+  #             -DCMAKE_GENERATOR:STRING=Ninja ^
+  #             -G "Ninja"
+  #     - name: Build
+  #       run: |
+  #         set Path=%Qt6_DIR%\..\..\Tools\mingw1120_64\bin;%Path%
+  #         cmake --build "%GITHUB_WORKSPACE%\build" --parallel
+  #     - name: Make NSIS installer
+  #       run: |
+  #         makensis %GITHUB_WORKSPACE%\build\gem-imager.nsi
+  #     - name: Get project version
+  #       id: getversion
+  #       shell: bash
+  #       run: |
+  #         version=$(grep IMAGER_VERSION_STR "$GITHUB_WORKSPACE/build/CMakeCache.txt" | cut -d '=' -f 2)
+  #         mv $GITHUB_WORKSPACE/build/gem-imager-${version}.exe $GITHUB_WORKSPACE/build/GemImager-${version}.exe
+  #         tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$version"
+  #     - name: Upload installer
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: GemImager Windows ${{ steps.getversion.outputs.gemImagerVersion }}
+  #         path: ${{ github.workspace }}\build\GemImager-${{ steps.getversion.outputs.gemImagerVersion }}.exe
 
   macos:
     runs-on: macos
