@@ -169,6 +169,13 @@ jobs:
       - name: Build
         run: |
           cmake --build "$GITHUB_WORKSPACE/build" --parallel
-      - name: Dirs
+      - name: Get project version
+        id: getversion
         run: |
-          ls -lah "$GITHUB_WORKSPACE/build"
+          version=$(grep IMAGER_VERSION_STR "$GITHUB_WORKSPACE/build/CMakeCache.txt" | cut -d '=' -f 2)
+          tee -a "${GITHUB_OUTPUT}" <<< gemImagerVersion="$version"
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: GemImager macOS ${{ steps.getversion.outputs.gemImagerVersion }}
+          path: ${{ github.workspace }}/build/GemstoneImager-${{ steps.getversion.outputs.gemImagerVersion }}.dmg
