@@ -110,7 +110,7 @@ jobs:
   #         path: ${{ github.workspace }}\build\GemImager-${{ steps.getversion.outputs.gemImagerVersion }}.exe
 
   macos-arm:
-    runs-on: macos-15
+    runs-on: macos-14
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
