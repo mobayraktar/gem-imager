@@ -121,14 +121,14 @@ jobs:
           target: 'desktop'
           arch: 'clang_64'
           modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
-      - name: Reinstall nghttp2 for arm64 support
+      - name: Rebuild libnghttp2 as universal binary
         run: |
-          brew uninstall libnghttp2
+          brew uninstall --ignore-dependencies libnghttp2
           brew install --build-from-source libnghttp2 \
-            --cc=clang \
             --env=std \
-            CFLAGS="-arch arm64" \
-            LDFLAGS="-arch arm64"
+            CFLAGS="-arch x86_64 -arch arm64" \
+            LDFLAGS="-arch x86_64 -arch arm64"
+          lipo -archs $(brew --prefix)/lib/libnghttp2.dylib
       - name: Checkout
         uses: actions/checkout@v4
       - name: Configure
