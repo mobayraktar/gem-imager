@@ -121,6 +121,14 @@ jobs:
           target: 'desktop'
           arch: 'clang_64'
           modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
+      - name: Reinstall nghttp2 for arm64 support
+        run: |
+          brew uninstall libnghttp2
+          brew install --build-from-source libnghttp2 \
+            --cc=clang \
+            --env=std \
+            CFLAGS="-arch arm64" \
+            LDFLAGS="-arch arm64"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Configure
