@@ -109,7 +109,7 @@ jobs:
   #         name: GemImager Windows ${{ steps.getversion.outputs.gemImagerVersion }}
   #         path: ${{ github.workspace }}\build\GemImager-${{ steps.getversion.outputs.gemImagerVersion }}.exe
 
-  macos:
+  macos-arm:
     runs-on: macos-14
     steps:
       - name: Install Qt
@@ -133,6 +133,39 @@ jobs:
             -DCMAKE_BUILD_TYPE:STRING=Release \
             -DCMAKE_PREFIX_PATH:PATH="$Qt6_DIR" \
             -DCMAKE_GENERATOR:STRING=Ninja \
+            -DCMAKE_OSX_ARCHITECTURES:STRING=arm64
+      - name: Build
+        run: |
+          cmake --build "$GITHUB_WORKSPACE/build" --parallel
+      - name: Dirs
+        run: |
+          ls -lah "$GITHUB_WORKSPACE/build"
+
+  macos-x86_64:
+    runs-on: macos-13
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          aqtversion: '==3.1.*'
+          version: '6.7.3'
+          host: 'mac'
+          target: 'desktop'
+          arch: 'clang_64'
+          modules: 'qtimageformats qtpdf qtserialport qtvirtualkeyboard qtquick3d'
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure
+        id: configure
+        run: |
+          export Qt6_ROOT="$Qt6_DIR"
+
+          cmake -S "$GITHUB_WORKSPACE/src" -B "$GITHUB_WORKSPACE/build" \
+            -DQT_QMAKE_EXECUTABLE:FILEPATH="$Qt6_DIR/bin/qmake" \
+            -DCMAKE_BUILD_TYPE:STRING=Release \
+            -DCMAKE_PREFIX_PATH:PATH="$Qt6_DIR" \
+            -DCMAKE_GENERATOR:STRING=Ninja \
+            -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
       - name: Build
         run: |
           cmake --build "$GITHUB_WORKSPACE/build" --parallel
