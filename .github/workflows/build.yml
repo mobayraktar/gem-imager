@@ -130,11 +130,14 @@ jobs:
       
           # Build arm64
           mkdir build-arm64 && cd build-arm64
-          ../configure --prefix=$GITHUB_WORKSPACE/nghttp2-universal/arm64 CFLAGS="-arch arm64"
+          ../configure \
+            --host=arm-apple-darwin \
+            --build=x86_64-apple-darwin \
+            --prefix=$GITHUB_WORKSPACE/nghttp2-universal/arm64 \
+            CFLAGS="-arch arm64" LDFLAGS="-arch arm64"
           make -j$(sysctl -n hw.logicalcpu)
           make install
-          cd ..
-      
+
           # Combine into universal dylib
           mkdir -p $GITHUB_WORKSPACE/nghttp2-universal/universal/lib
           lipo -create \
