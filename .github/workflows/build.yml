@@ -128,8 +128,8 @@ jobs:
         run: |
           export Qt6_ROOT="$Qt6_DIR"
 
-          cmake -S "%GITHUB_WORKSPACE%\src" -B "%GITHUB_WORKSPACE%\build" \
-            -DQT_QMAKE_EXECUTABLE:FILEPATH="%Qt6_DIR%\bin\qmake" \
+          cmake -S "$GITHUB_WORKSPACE%/src" -B "$GITHUB_WORKSPACE/build" \
+            -DQT_QMAKE_EXECUTABLE:FILEPATH="$Qt6_DIR/bin/qmake" \
             -DCMAKE_BUILD_TYPE:STRING=Release \
-            -DCMAKE_PREFIX_PATH:PATH="%Qt6_DIR%" \
+            -DCMAKE_PREFIX_PATH:PATH="$Qt6_DIR" \
             -DCMAKE_GENERATOR:STRING=Ninja \
